@@ -1,0 +1,25 @@
+{
+    "name": "coquardcyr/scb-payment-api",
+    "description": "A php layer to use SCB payment API",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "COQUARD Cyrille",
+            "email": "coquardcyr@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "SCBPaymentAPI\\": "src/"
+        },
+        "classmap": [
+        ],
+        "exclude-from-classmap": []
+    },
+    "config": {
+        "preferred-install": "dist",
+        "prepend-autoloader": false
+    }
+}
