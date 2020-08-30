@@ -52,9 +52,10 @@ class API
                 CURLOPT_FOLLOWLOCATION => true,
                 CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
                 CURLOPT_CUSTOMREQUEST => mb_strtoupper($method),
-                CURLOPT_POSTFIELDS => $body,
                 CURLOPT_HTTPHEADER => $headers,
             ]);
+            if(mb_strtoupper($method) == 'POST')
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
             $result = curl_exec($ch);
             $data = json_decode($result);
             if(! property_exists($data, 'status') || ! property_exists($data->status, 'code') || $data->status->code != '1000' || ! property_exists($data, 'data'))
