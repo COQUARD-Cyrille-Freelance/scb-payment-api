@@ -23,12 +23,12 @@ class API
             $this->baseURL = 'https://api-sandbox.partners.scb/partners/sandbox';
         else
             $this->baseURL = 'http://api.partners.scb/partners';
-        $this->merchant = $merchant;
-        $this->terminal = $terminal;
-        $this->language = $language;
-        $this->biller = $biller;
-        $this->appId = $appId;
-        $this->authentificate($appId, $appSecret);
+        $this->merchant = trim($merchant);
+        $this->terminal = trim($terminal);
+        $this->language = mb_strtoupper(trim($language));
+        $this->biller = trim($biller);
+        $this->appId = trim($appId);
+        $this->authentificate(trim($appId), trim($appSecret));
     }
 
     protected function request($method, $path, $headers=[], $body=[]): stdClass {
@@ -37,22 +37,25 @@ class API
         $headers[] = 'accept-language: ' . $this->language;
         $headers[] = 'requestUId: ' . $this->getNonce();
 
-        curl_setopt($curl, CURLOPT_VERBOSE, true);
-        curl_setopt($curl, CURLOPT_STDERR, fopen('php://stderr', 'w'));
-
         try{
-            if(mb_strtoupper($method) == 'POST'){
-                $body = json_encode($body);
-                $headers[] = 'Content-Type: application/json';
-                curl_setopt($ch,CURLOPT_POST,true);
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-            }
-            curl_setopt($ch, CURLOPT_URL, $this->baseURL . $path);
-            curl_setopt($ch,     CURLOPT_RETURNTRANSFER, true);
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
+            $headers[] = 'Content-Type: application/json';
+
+            $body = json_encode($body);
+
+            curl_setopt_array($ch, [
+                CURLOPT_URL => $this->baseURL . $path,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_ENCODING => "",
+                CURLOPT_MAXREDIRS => 10,
+                CURLOPT_TIMEOUT => 0,
+                CURLOPT_FOLLOWLOCATION => true,
+                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+                CURLOPT_CUSTOMREQUEST => mb_strtoupper($method),
+                CURLOPT_POSTFIELDS => $body,
+                CURLOPT_HTTPHEADER => $headers,
+            ]);
             $result = curl_exec($ch);
-            $info = curl_getinfo($ch);
             $data = json_decode($result);
             if(! property_exists($data, 'status') || ! property_exists($data->status, 'code') || $data->status->code != '1000' || ! property_exists($data, 'data'))
                 throw new SCBPaymentAPIException('SCB API Request failed');
@@ -68,7 +71,7 @@ class API
         return time() . uniqid();
     }
 
-    protected function authentificate(string $appId, string $appSecret) {
+    protected function authentificate(string $appId, string $appSecret): void {
         $headers = [
             'resourceOwnerId: ' . $appId,
         ];
@@ -88,7 +91,7 @@ class API
         $this->token = $data->accessToken;
     }
 
-    public function createQRCode(string $transactionID, string $amount) {
+    public function createQRCode(string $transactionID, string $amount): stdClass {
         $headers = [
             'authorization: Bearer ' . $this->token,
             'resourceOwnerId: ' . $this->appId,
@@ -112,6 +115,36 @@ class API
         }catch (SCBPaymentAPIException $e){
             throw new SCBPaymentAPIException('Fail to create SCB QRCode');
         }
-        $data;
+        return $data;
+    }
+
+    public function checkTransactionBillPayment(string $reference1, string $reference2, \DateTime $transactionDate): stdClass {
+        $headers = [
+            'authorization: Bearer ' . $this->token,
+            'resourceOwnerId: ' . $this->appId,
+        ];
+        $path = "/v1/payment/billpayment/inquiry?billerId={$this->biller}&reference1=${reference1}&reference2=${reference2}&transactionDate={$transactionDate->format('Y-m-d')}&eventCode=00300100";
+        try {
+            $data = $this->request('GET', $path, $headers);
+        }catch (SCBPaymentAPIException $e) {
+            throw new SCBPaymentAPIException('Fail to get the transaction');
+        }
+        return $data;
+    }
+
+    public function checkTransactionCreditCardPayment(string $QRCodeId): stdClass {
+        $headers = [
+            'authorization: Bearer ' . $this->token,
+            'resourceOwnerId: ' . $this->appId,
+        ];
+
+        $path = "/v1/payment/qrcode/creditcard/${QRCodeId}";
+
+        try {
+            $data = $this->request('GET', $path, $headers);
+        }catch (SCBPaymentAPIException $e) {
+            throw new SCBPaymentAPIException('Fail to get the transaction');
+        }
+        return $data;
     }
 }
