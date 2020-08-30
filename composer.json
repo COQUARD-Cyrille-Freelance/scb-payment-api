@@ -9,7 +9,13 @@
             "email": "coquardcyr@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "php": ">=7.2",
+        "ext-json": "*",
+        "ext-curl": "*",
+        "ext-mbstring": "*",
+        "guzzlehttp/guzzle": "^7.0"
+    },
     "autoload": {
         "psr-4": {
             "SCBPaymentAPI\\": "src/"
@@ -18,8 +24,35 @@
         ],
         "exclude-from-classmap": []
     },
+    "autoload-dev": {
+        "psr-4": {
+            "SCBPaymentAPI\\Tests\\": "tests/"
+        }
+    },
     "config": {
         "preferred-install": "dist",
         "prepend-autoloader": false
+    },
+    "require-dev": {
+        "phpstan/phpstan": "^0.12.40",
+        "friendsofphp/php-cs-fixer": "^2.9",
+        "phpunit/phpunit": "^9.3"
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "phpstan": "vendor/bin/phpstan analyse src --level 8",
+        "check-style": "php-cs-fixer fix --using-cache=no --diff --dry-run .",
+        "fix-style": "php-cs-fixer fix --using-cache=no ."
+    },
+    "extra": {
+        "hooks": {
+            "pre-commit": [
+                "composer check-style",
+                "composer phpstan"
+            ],
+            "pre-push": [
+                "composer test"
+            ]
+        }
     }
 }

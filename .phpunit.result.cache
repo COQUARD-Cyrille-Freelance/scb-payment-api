@@ -1,0 +1,1 @@
+C:37:"PHPUnit\Runner\DefaultTestResultCache":151:{a:2:{s:7:"defects";a:1:{s:40:"SCBPaymentAPI\Tests\BasicTest::testBasic";i:4;}s:5:"times";a:1:{s:40:"SCBPaymentAPI\Tests\BasicTest::testBasic";d:1.35;}}}
