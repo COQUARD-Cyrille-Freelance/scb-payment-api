@@ -17,8 +17,9 @@ class API
     protected $merchant = '';
     protected $terminal = '';
     protected $biller = '';
+    protected $prefix = '';
 
-    public function __construct(string $appId, string $appSecret, string $merchant, string $terminal, string $biller, bool $sandbox = false, string $language = 'EN') {
+    public function __construct(string $appId, string $appSecret, string $merchant, string $terminal, string $biller, string $prefix, bool $sandbox = false, string $language = 'EN') {
         if($sandbox)
             $this->baseURL = 'https://api-sandbox.partners.scb/partners/sandbox';
         else
@@ -29,6 +30,7 @@ class API
         $this->biller = trim($biller);
         $this->appId = trim($appId);
         $this->authentificate(trim($appId), trim($appSecret));
+        $this->prefix = mb_strtoupper(trim($prefix));
     }
 
     protected function request($method, $path, $headers=[], $body=[]): stdClass {
@@ -105,7 +107,7 @@ class API
             "amount"=> (string) $amount,
             "ref1" => (string) $transactionID,
             "ref2" => (string) $transactionID,
-            "ref3" => "XOU",
+            "ref3" => $this->prefix,
             "merchantId"=> $this->merchant,
             "terminalId"=> $this->terminal,
             "invoice"=> (string) $transactionID,
