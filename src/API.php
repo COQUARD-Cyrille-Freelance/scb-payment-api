@@ -4,6 +4,7 @@
 namespace SCBPaymentAPI;
 
 
+use DateTimeZone;
 use Exception;
 use SCBPaymentAPI\Exceptions\SCBPaymentAPIException;
 use stdClass;
@@ -195,6 +196,9 @@ class API
             'authorization: Bearer ' . $this->token,
             'resourceOwnerId: ' . $this->appId,
         ];
+
+        $transactionDate->setTimezone(new DateTimeZone('Asia/Bangkok'));
+
         $path = "/v1/payment/billpayment/inquiry?billerId={$this->biller}&reference1=${reference1}&reference2=${reference2}&transactionDate={$transactionDate->format('Y-m-d')}&eventCode=00300100";
         try {
             $data = $this->request('GET', $path, $headers);
