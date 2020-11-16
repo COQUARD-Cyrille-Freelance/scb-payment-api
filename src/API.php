@@ -68,7 +68,7 @@ class API
         $this->language = mb_strtoupper(trim($language));
         $this->biller = trim($biller);
         $this->appId = trim($appId);
-        $this->authentificate(trim($appId), trim($appSecret));
+        $this->authenticate(trim($appId), trim($appSecret));
         $this->prefix = mb_strtoupper(trim($prefix));
     }
 
@@ -130,7 +130,7 @@ class API
      * @param string $appId ID from the application
      * @param string $appSecret Secret ID from the application
      */
-    protected function authentificate(string $appId, string $appSecret): void {
+    protected function authenticate(string $appId, string $appSecret): void {
         $headers = [
             'resourceOwnerId: ' . $appId,
         ];
