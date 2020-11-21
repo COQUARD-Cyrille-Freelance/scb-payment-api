@@ -213,13 +213,13 @@ class API
      * @param string $transationId id from the transaction
      * @return array transaction data
      */
-    public function checkTransactionCreditCardPayment(string $transationId): array {
+    public function checkTransactionCreditCardPayment(string $transationId) {
         $headers = [
             'authorization: Bearer ' . $this->token,
             'resourceOwnerId: ' . $this->appId,
         ];
 
-        $path = "/v1/payment/qrcode/creditcard/${$transationId}";
+        $path = "/v1/payment/qrcode/creditcard/${transationId}";
 
         try {
             $data = $this->request('GET', $path, $headers);

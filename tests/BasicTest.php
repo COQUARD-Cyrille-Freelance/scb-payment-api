@@ -23,7 +23,7 @@ class BasicTest extends TestCase
         );
 
         try {
-            $data = $api->checkTransactionCreditCardPayment('14');
+            $data = $api->checkTransactionCreditCardPayment('20201122041802819000000');
         } catch (SCBPaymentAPIException $e) {
             $e->getMessage();
         }
