@@ -14,11 +14,11 @@
 */
 
 
-namespace SCBPaymentAPI;
+namespace CoquardCyrilleFreelance\SCBPaymentAPI;
 
 use DateTimeZone;
 use Exception;
-use SCBPaymentAPI\Exceptions\SCBPaymentAPIException;
+use CoquardCyrilleFreelance\SCBPaymentAPI\Exceptions\SCBPaymentAPIException;
 use stdClass;
 
 /**

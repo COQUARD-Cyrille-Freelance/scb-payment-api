@@ -14,7 +14,7 @@
 */
 
 
-namespace SCBPaymentAPI\Exceptions;
+namespace CoquardCyrilleFreelance\SCBPaymentAPI\Exceptions;
 
 /**
  * Class SCBPaymentAPIException Exception from the API
