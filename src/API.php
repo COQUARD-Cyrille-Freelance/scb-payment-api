@@ -82,6 +82,8 @@ class API
      * @return result from the request
      */
     protected function request(string $method, string $path, $headers=[], array $body=[]) {
+        if(! extension_loaded('curl'))
+            throw new SCBPaymentAPIException('Curl extension needs to be installed');
         $ch = curl_init();
 
         $headers[] = 'accept-language: ' . $this->language;
@@ -114,7 +116,7 @@ class API
             return $data->data;
         }catch (Exception $e) {
             curl_close($ch);
-            throw new SCBPaymentAPIException();
+            throw new SCBPaymentAPIException($e->getMessage());
         }
     }
 
