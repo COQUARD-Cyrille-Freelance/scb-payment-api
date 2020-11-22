@@ -35,7 +35,7 @@
     "require-dev": {
         "phpstan/phpstan": "^0.12.40",
         "friendsofphp/php-cs-fixer": "^2.9",
-        "phpunit/phpunit": "^9.3"
+        "prestashop/php-dev-tools": "~3.0"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
