@@ -18,7 +18,6 @@ namespace CoquardCyrilleFreelance\SCBPaymentAPI;
 
 use DateTime;
 use DateTimeZone;
-use Exception;
 use CoquardCyrilleFreelance\SCBPaymentAPI\Exceptions\SCBPaymentAPIException;
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
@@ -101,18 +100,22 @@ class API
     }
 
     public function initialize(Configurations $configurations) {
-        $this->merchant = trim($configurations->getMerchant());
-        $this->terminal = trim($configurations->getTerminal());
-        $this->language = mb_strtoupper(trim($configurations->getLanguage()));
-        $this->biller = trim($configurations->getBiller());
-        $this->appId = trim($configurations->getApplicationId());
-        $this->authenticate($this->appId, trim($configurations->getApplicationSecret()));
-        $this->prefix = mb_strtoupper(trim($configurations->getPrefix()));
         if ($configurations->isSandbox()) {
             $this->baseURL = 'https://api-sandbox.partners.scb/partners/sandbox';
         } else {
             $this->baseURL = 'http://api.partners.scb/partners';
         }
+        $this->merchant = trim($configurations->getMerchant());
+        $this->terminal = trim($configurations->getTerminal());
+        $this->language = mb_strtoupper(trim($configurations->getLanguage()));
+        $this->biller = trim($configurations->getBiller());
+        $this->appId = trim($configurations->getApplicationId());
+        $this->prefix = mb_strtoupper(trim($configurations->getPrefix()));
+        $this->authenticate($this->appId, trim($configurations->getApplicationSecret()));
+    }
+
+    public function is_initialized(): bool {
+        return (bool) $this->token;
     }
 
     /**
@@ -203,6 +206,8 @@ class API
      */
     public function createQRCode(string $transactionID, string $amount): stdClass
     {
+        $this->failOnNotInitialize();
+
         $headers = [
             'authorization' => ' Bearer ' . $this->token,
             'resourceOwnerId' => $this->appId,
@@ -241,6 +246,8 @@ class API
      */
     public function checkTransactionBillPayment(string $reference1, string $reference2, DateTime $transactionDate): array
     {
+        $this->failOnNotInitialize();
+
         $headers = [
             'authorization' => 'Bearer ' . $this->token,
             'resourceOwnerId' => $this->appId,
@@ -267,6 +274,8 @@ class API
      */
     public function checkTransactionCreditCardPayment(string $transationId)
     {
+        $this->failOnNotInitialize();
+
         $headers = [
             'authorization' => 'Bearer ' . $this->token,
             'resourceOwnerId' => $this->appId,
@@ -281,5 +290,11 @@ class API
         }
 
         return $data;
+    }
+
+    protected function failOnNotInitialize() {
+        if(! $this->token) {
+            throw new SCBPaymentAPIException('Fail to get the transaction');
+        }
     }
 }

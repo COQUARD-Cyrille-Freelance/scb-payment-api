@@ -1,6 +1,6 @@
 <?php
 
-namespace SCBPaymentAPI\Tests\Unit\API;
+namespace SCBPaymentAPI\Tests\Unit\src\API;
 
 class checkTransactionCreditCardPayment
 {
