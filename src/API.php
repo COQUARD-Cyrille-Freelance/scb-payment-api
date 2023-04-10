@@ -16,9 +16,14 @@
 
 namespace CoquardCyrilleFreelance\SCBPaymentAPI;
 
+use DateTime;
 use DateTimeZone;
 use Exception;
 use CoquardCyrilleFreelance\SCBPaymentAPI\Exceptions\SCBPaymentAPIException;
+use Psr\Http\Client\ClientExceptionInterface;
+use Psr\Http\Client\ClientInterface;
+use Psr\Http\Message\RequestFactoryInterface;
+use Psr\Http\Message\StreamFactoryInterface;
 use stdClass;
 
 /**
@@ -60,8 +65,25 @@ class API
     protected $prefix = '';
 
     /**
-     * API constructor.
+     * HTTP Client.
      *
+     * @var ClientInterface
+     */
+    protected $client;
+
+    /**
+     * @var RequestFactoryInterface
+     */
+    protected $requestFactory;
+
+    /**
+     * @var StreamFactoryInterface
+     */
+    protected $streamFactory;
+
+    /**
+     * API constructor.
+     * @param ClientInterface $client HTTP Client.
      * @param string $appId ID from the application
      * @param string $appSecret Secret ID from the application
      * @param string $merchant ID from the merchant
@@ -71,20 +93,26 @@ class API
      * @param bool $sandbox sandbox mode
      * @param string $language language for the response payloads
      */
-    public function __construct(string $appId, string $appSecret, string $merchant, string $terminal, string $biller, string $prefix, bool $sandbox = false, string $language = 'EN')
+    public function __construct(ClientInterface $client, RequestFactoryInterface $requestFactory, StreamFactoryInterface $streamFactory)
     {
-        if ($sandbox) {
+        $this->client = $client;
+        $this->requestFactory = $requestFactory;
+        $this->streamFactory = $streamFactory;
+    }
+
+    public function initialize(Configurations $configurations) {
+        $this->merchant = trim($configurations->getMerchant());
+        $this->terminal = trim($configurations->getTerminal());
+        $this->language = mb_strtoupper(trim($configurations->getLanguage()));
+        $this->biller = trim($configurations->getBiller());
+        $this->appId = trim($configurations->getApplicationId());
+        $this->authenticate($this->appId, trim($configurations->getApplicationSecret()));
+        $this->prefix = mb_strtoupper(trim($configurations->getPrefix()));
+        if ($configurations->isSandbox()) {
             $this->baseURL = 'https://api-sandbox.partners.scb/partners/sandbox';
         } else {
             $this->baseURL = 'http://api.partners.scb/partners';
         }
-        $this->merchant = trim($merchant);
-        $this->terminal = trim($terminal);
-        $this->language = mb_strtoupper(trim($language));
-        $this->biller = trim($biller);
-        $this->appId = trim($appId);
-        $this->authenticate(trim($appId), trim($appSecret));
-        $this->prefix = mb_strtoupper(trim($prefix));
     }
 
     /**
@@ -99,45 +127,32 @@ class API
      */
     protected function request(string $method, string $path, $headers = [], array $body = [])
     {
-        if (!extension_loaded('curl')) {
-            throw new SCBPaymentAPIException('Curl extension needs to be installed');
-        }
-        $ch = curl_init();
+        $request = $this->requestFactory->createRequest($method, $this->baseURL . $path);
 
-        $headers[] = 'accept-language: ' . $this->language;
-        $headers[] = 'requestUId: ' . $this->getNonce();
+        $request->withHeader('accept-language', $this->language);
+        $request->withHeader('requestUId', $this->getNonce());
+        $request->withHeader('Content-Type', 'application/json');
+
+        foreach ($headers as $header => $value) {
+            $request->withHeader($header, $value);
+        }
+
+        $body = json_encode($body);
+
+        $request->withBody($this->streamFactory->createStream($body));
 
         try {
-            $headers[] = 'Content-Type: application/json';
-
-            $body = json_encode($body);
-
-            curl_setopt_array($ch, [
-                CURLOPT_URL => $this->baseURL . $path,
-                CURLOPT_RETURNTRANSFER => true,
-                CURLOPT_ENCODING => '',
-                CURLOPT_MAXREDIRS => 10,
-                CURLOPT_TIMEOUT => 0,
-                CURLOPT_FOLLOWLOCATION => true,
-                CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-                CURLOPT_CUSTOMREQUEST => mb_strtoupper($method),
-                CURLOPT_HTTPHEADER => $headers,
-            ]);
-            if (mb_strtoupper($method) == 'POST') {
-                curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
-            }
-            $result = curl_exec($ch);
-            $data = json_decode($result);
-            if (!property_exists($data, 'status') || !property_exists($data->status, 'code') || $data->status->code != '1000' || !property_exists($data, 'data')) {
-                throw new SCBPaymentAPIException('SCB API Request failed');
-            }
-            curl_close($ch);
-
-            return $data->data;
-        } catch (Exception $e) {
-            curl_close($ch);
-            throw new SCBPaymentAPIException($e->getMessage());
+            $response = $this->client->sendRequest($request);
+        } catch (ClientExceptionInterface $e) {
+            throw new SCBPaymentAPIException('SCB API Request failed');
         }
+
+        $data = json_decode($response->getBody()->getContents());
+        if (! $data || !property_exists($data, 'status') || !property_exists($data->status, 'code') || $data->status->code != '1000' || !property_exists($data, 'data')) {
+            throw new SCBPaymentAPIException('SCB API Request failed');
+        }
+
+        return $data->data;
     }
 
     /**
@@ -159,7 +174,7 @@ class API
     protected function authenticate(string $appId, string $appSecret): void
     {
         $headers = [
-            'resourceOwnerId: ' . $appId,
+            'resourceOwnerId' => $appId,
         ];
 
         $body = [
@@ -189,8 +204,8 @@ class API
     public function createQRCode(string $transactionID, string $amount): stdClass
     {
         $headers = [
-            'authorization: Bearer ' . $this->token,
-            'resourceOwnerId: ' . $this->appId,
+            'authorization' => ' Bearer ' . $this->token,
+            'resourceOwnerId' => $this->appId,
         ];
 
         $body = [
@@ -220,15 +235,15 @@ class API
      *
      * @param string $reference1 first reference from the transaction
      * @param string $reference2 second reference from the transaction
-     * @param \DateTime $transactionDate date from the transaction
+     * @param DateTime $transactionDate date from the transaction
      *
      * @return array transaction data
      */
-    public function checkTransactionBillPayment(string $reference1, string $reference2, \DateTime $transactionDate): array
+    public function checkTransactionBillPayment(string $reference1, string $reference2, DateTime $transactionDate): array
     {
         $headers = [
-            'authorization: Bearer ' . $this->token,
-            'resourceOwnerId: ' . $this->appId,
+            'authorization' => 'Bearer ' . $this->token,
+            'resourceOwnerId' => $this->appId,
         ];
 
         $transactionDate->setTimezone(new DateTimeZone('Asia/Bangkok'));
@@ -253,8 +268,8 @@ class API
     public function checkTransactionCreditCardPayment(string $transationId)
     {
         $headers = [
-            'authorization: Bearer ' . $this->token,
-            'resourceOwnerId: ' . $this->appId,
+            'authorization' => 'Bearer ' . $this->token,
+            'resourceOwnerId' => $this->appId,
         ];
 
         $path = "/v1/payment/qrcode/creditcard/${transationId}";
