@@ -1,6 +1,6 @@
 {
     "name": "coquardcyr/scb-payment-api",
-    "description": "A php layer to use SCB payment API",
+    "description": "A php SDK to use SCB payment API",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -13,7 +13,9 @@
         "php": ">=7.2",
         "ext-json": "*",
         "ext-curl": "*",
-        "ext-mbstring": "*"
+        "ext-mbstring": "*",
+        "psr/http-client": "^1.0",
+        "psr/http-factory": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -35,7 +37,9 @@
     "require-dev": {
         "phpstan/phpstan": "^0.12.40",
         "friendsofphp/php-cs-fixer": "^2.9",
-        "prestashop/php-dev-tools": "~3.0"
+        "prestashop/php-dev-tools": "~3.0",
+        "phpunit/phpunit": "^7.5 || ^8 || ^9",
+        "wp-media/phpunit": "^3.0"
     },
     "scripts": {
         "test": "vendor/bin/phpunit",
