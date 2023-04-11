@@ -1,8 +1,8 @@
 <?php
 
-namespace SCBPaymentAPI\Tests\Unit\src\API;
+namespace SCBPaymentAPI\Tests\Unit\src\Client;
 
-use CoquardCyrilleFreelance\SCBPaymentAPI\API;
+use CoquardCyrilleFreelance\SCBPaymentAPI\Client;
 use CoquardCyrilleFreelance\SCBPaymentAPI\Configurations;
 use CoquardCyrilleFreelance\SCBPaymentAPI\Exceptions\SCBPaymentAPIException;
 use Mockery;
@@ -43,7 +43,7 @@ class Test_CheckTransactionBillPayment extends TestCase
         $this->response_stream = Mockery::mock(StreamInterface::class);
         $this->configurations = Mockery::mock(Configurations::class);
         $this->stream = Mockery::mock(StreamInterface::class);
-        $this->api = new API($this->client, $this->requestFactory, $this->streamFactory);
+        $this->api = new Client($this->client, $this->requestFactory, $this->streamFactory);
     }
 
     /**

@@ -27,7 +27,7 @@ use Psr\Http\Message\StreamFactoryInterface;
 /**
  * Class API that wrap SCB API to prevent strong dependencies on it.
  */
-class API
+class Client
 {
     /**
      * Base URL for all requests.

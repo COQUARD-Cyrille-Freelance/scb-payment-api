@@ -1,8 +1,8 @@
 <?php
 
-namespace SCBPaymentAPI\Tests\Unit\src\API;
+namespace SCBPaymentAPI\Tests\Unit\src\Client;
 
-use CoquardCyrilleFreelance\SCBPaymentAPI\API;
+use CoquardCyrilleFreelance\SCBPaymentAPI\Client;
 use CoquardCyrilleFreelance\SCBPaymentAPI\Configurations;
 use CoquardCyrilleFreelance\SCBPaymentAPI\Exceptions\SCBPaymentAPIException;
 use Mockery;
@@ -16,7 +16,7 @@ use SCBPaymentAPI\Tests\Fixtures\files\ClientException;
 use SCBPaymentAPI\Tests\Unit\InitializeProperties;
 use SCBPaymentAPI\Tests\Unit\TestCase;
 
-class Test_CreateQRCode extends TestCase
+class Test_CheckTransactionCreditCardPayment extends TestCase
 {
     use InitializeProperties;
 
@@ -32,7 +32,6 @@ class Test_CreateQRCode extends TestCase
     protected $response_stream;
 
     protected $stream;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,7 +43,7 @@ class Test_CreateQRCode extends TestCase
         $this->response_stream = Mockery::mock(StreamInterface::class);
         $this->configurations = Mockery::mock(Configurations::class);
         $this->stream = Mockery::mock(StreamInterface::class);
-        $this->api = new API($this->client, $this->requestFactory, $this->streamFactory);
+        $this->api = new Client($this->client, $this->requestFactory, $this->streamFactory);
     }
 
     /**
@@ -56,7 +55,7 @@ class Test_CreateQRCode extends TestCase
         $this->configureSendRequest($config, $expected);
         $this->configureNotConfigured($config, $expected);
 
-        $data = $this->api->createQRCode($config['transaction_id'], $config['amount']);
+        $data = $this->api->checkTransactionCreditCardPayment($config['transaction_id']);
 
         $this->assertSuccess($config, $expected, $data);
     }
