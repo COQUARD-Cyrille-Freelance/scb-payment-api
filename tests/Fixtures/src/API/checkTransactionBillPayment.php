@@ -23,7 +23,7 @@ return [
                     'code' => 1000,
                 ],
                 'data' => [
-                    (object) [
+                    [
                         'test' => 'test'
                     ]
                 ]
@@ -34,7 +34,7 @@ return [
             'method' => 'GET',
             'uri' => 'http://api.partners.scb/partners/v1/payment/billpayment/inquiry?billerId=biller_id&reference1=reference1&reference2=reference2&transactionDate=1997-01-01&eventCode=00300100',
             'data' => [
-                (object) [
+                [
                     'test' => 'test'
                 ]
             ],
@@ -70,7 +70,7 @@ return [
                     'code' => 1000,
                 ],
                 'data' => [
-                    (object) [
+                    [
                         'test' => 'test'
                     ]
                 ]
@@ -81,7 +81,7 @@ return [
             'method' => 'GET',
             'uri' => 'http://api.partners.scb/partners/v1/payment/billpayment/inquiry?billerId=biller_id&reference1=reference1&reference2=reference2&transactionDate=1997-01-01&eventCode=00300100',
             'data' => [
-                (object) [
+                [
                     'test' => 'test'
                 ]
             ],
@@ -117,7 +117,7 @@ return [
                     'code' => 1000,
                 ],
                 'data' => [
-                    (object) [
+                    [
                         'test' => 'test'
                     ]
                 ]
@@ -128,7 +128,7 @@ return [
             'method' => 'GET',
             'uri' => 'http://api.partners.scb/partners/v1/payment/billpayment/inquiry?billerId=biller_id&reference1=reference1&reference2=reference2&transactionDate=1997-01-01&eventCode=00300100',
             'data' => [
-                (object) [
+                [
                     'test' => 'test'
                 ]
             ],

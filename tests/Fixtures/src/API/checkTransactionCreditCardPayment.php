@@ -20,7 +20,7 @@ return [
                     'code' => 1000,
                 ],
                 'data' => [
-                    (object) [
+                    [
                         'test' => 'test'
                     ]
                 ]
@@ -31,7 +31,7 @@ return [
             'method' => 'GET',
             'uri' => 'http://api.partners.scb/partners/v1/payment/qrcode/creditcard/transaction_id',
             'data' => [
-                (object) [
+                [
                     'test' => 'test'
                 ]
             ],
@@ -64,7 +64,7 @@ return [
                     'code' => 1000,
                 ],
                 'data' => [
-                    (object) [
+                    [
                         'test' => 'test'
                     ]
                 ]
@@ -75,7 +75,7 @@ return [
             'method' => 'GET',
             'uri' => 'http://api.partners.scb/partners/v1/payment/qrcode/creditcard/transaction_id',
             'data' => [
-                (object) [
+                [
                     'test' => 'test'
                 ]
             ],
@@ -108,7 +108,7 @@ return [
                     'code' => 1000,
                 ],
                 'data' => [
-                    (object) [
+                    [
                         'test' => 'test'
                     ]
                 ]
@@ -119,7 +119,7 @@ return [
             'method' => 'GET',
             'uri' => 'http://api.partners.scb/partners/v1/payment/qrcode/creditcard/transaction_id',
             'data' => [
-                (object) [
+                [
                     'test' => 'test'
                 ]
             ],

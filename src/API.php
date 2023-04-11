@@ -23,10 +23,9 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
-use stdClass;
 
 /**
- * Class API that wrap SCB API to prevent strong dependencies on it
+ * Class API that wrap SCB API to prevent strong dependencies on it.
  */
 class API
 {
@@ -121,7 +120,7 @@ class API
         $this->streamFactory = $streamFactory;
     }
 
-    public function initialize(Configurations $configurations) {
+    public function initialize(Configurations $configurations): void {
         if ($configurations->isSandbox()) {
             $this->baseURL = 'https://api-sandbox.partners.scb/partners/sandbox';
         } else {
@@ -153,9 +152,9 @@ class API
      * @param array $headers headers from the request
      * @param array $body body from the request
      *
-     * @return result from the request
+     * @return array from the request
      */
-    protected function request(string $method, string $path, $headers = [], array $body = [])
+    protected function request(string $method, string $path, $headers = [], array $body = []): array
     {
         $request = $this->requestFactory->createRequest($method, $this->baseURL . $path);
 
@@ -177,13 +176,13 @@ class API
             throw new SCBPaymentAPIException('SCB API Request failed');
         }
 
-        $data = json_decode($response->getBody()->getContents());
+        $data = json_decode($response->getBody()->getContents(), true);
 
-        if (! $data || !property_exists($data, 'status') || !property_exists($data->status, 'code') || $data->status->code != '1000' || !property_exists($data, 'data')) {
+        if (! $data || ! key_exists('status', $data) || !key_exists('code', $data['status']) || ((int) $data['status']['code']) !== 1000 || ! key_exists( 'data', $data) ) {
             throw new SCBPaymentAPIException('SCB API Request failed');
         }
 
-        return $data->data;
+        return $data['data'];
     }
 
     /**
@@ -218,10 +217,10 @@ class API
         } catch (SCBPaymentAPIException $e) {
             throw new SCBPaymentAPIException('Fail to authenticate SCB API');
         }
-        if (!property_exists($data, 'accessToken')) {
+        if (!key_exists('accessToken', $data)) {
             throw new SCBPaymentAPIException('Fail to authenticate SCB API');
         }
-        $this->token = $data->accessToken;
+        $this->token = $data['accessToken'];
     }
 
     /**
@@ -230,9 +229,9 @@ class API
      * @param string $transactionID ID from the transaction
      * @param string $amount amount from the transaction
      *
-     * @return stdClass QRCode created
+     * @return array QRCode created
      */
-    public function createQRCode(string $transactionID, string $amount): stdClass
+    public function createQRCode(string $transactionID, string $amount): array
     {
         $this->failOnNotInitialize();
 
@@ -300,7 +299,7 @@ class API
      *
      * @return array transaction data
      */
-    public function checkTransactionCreditCardPayment(string $transationId)
+    public function checkTransactionCreditCardPayment(string $transationId): array
     {
         $this->failOnNotInitialize();
 
@@ -325,7 +324,7 @@ class API
      *
      * @return void
      */
-    protected function failOnNotInitialize() {
+    protected function failOnNotInitialize(): void {
         if(! $this->token) {
             throw new SCBPaymentAPIException('Fail to get the transaction');
         }

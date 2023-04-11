@@ -20,7 +20,7 @@ return [
                 'status' => [
                     'code' => 1000,
                 ],
-                'data' => (object) [
+                'data' => [
                     'test' => 'test'
                 ]
             ]),
@@ -29,7 +29,7 @@ return [
             'body' => '{"qrType":"PPCS","ppType":"BILLERID","ppId":"biller_id","amount":"100","ref1":"transaction_id","ref2":"transaction_id","ref3":"prefix","merchantId":"merchant_id","terminalId":"terminal_id","invoice":"transaction_id","csExtExpiryTime":"60"}',
             'method' => 'POST',
             'uri' => 'http://api.partners.scb/partners/v1/payment/qrcode/create',
-            'data' => (object) [
+            'data' => [
                 'test' => 'test'
             ],
             'headers' => [
@@ -70,7 +70,7 @@ return [
             'body' => '{"qrType":"PPCS","ppType":"BILLERID","ppId":"biller_id","amount":"100","ref1":"transaction_id","ref2":"transaction_id","ref3":"prefix","merchantId":"merchant_id","terminalId":"terminal_id","invoice":"transaction_id","csExtExpiryTime":"60"}',
             'method' => 'POST',
             'uri' => 'http://api.partners.scb/partners/v1/payment/qrcode/create',
-            'data' => (object) [
+            'data' => [
                 'test' => 'test'
             ],
             'headers' => [
@@ -111,7 +111,7 @@ return [
             'body' => '{"qrType":"PPCS","ppType":"BILLERID","ppId":"biller_id","amount":"100","ref1":"transaction_id","ref2":"transaction_id","ref3":"prefix","merchantId":"merchant_id","terminalId":"terminal_id","invoice":"transaction_id","csExtExpiryTime":"60"}',
             'method' => 'POST',
             'uri' => 'http://api.partners.scb/partners/v1/payment/qrcode/create',
-            'data' => (object) [
+            'data' => [
                 'test' => 'test'
             ],
             'headers' => [
