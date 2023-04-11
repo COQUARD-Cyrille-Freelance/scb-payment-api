@@ -5,7 +5,7 @@ namespace SCBPaymentAPI\Tests\Unit;
 use ReflectionObject;
 use WPMedia\PHPUnit\Unit\TestCase as UnitTestCase;
 
-class TestCase extends UnitTestCase
+abstract class TestCase extends UnitTestCase
 {
     protected $config;
 
