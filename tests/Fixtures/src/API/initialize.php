@@ -12,7 +12,14 @@ return [
           'application_id' => 'application_id',
           'application_secret' => 'application_secret',
           'is_error' => false,
-          'response_content' => '{"status":{"code":1000},"data" : {"accessToken": "accessToken"}}'
+          'response_content' => json_encode([
+              'status' => [
+                  'code' => 1000,
+              ],
+              'data' => [
+                    'accessToken' => 'accessToken'
+              ]
+          ]),
       ],
       'expected' => [
           'method' => 'POST',
@@ -37,7 +44,14 @@ return [
             'application_id' => 'application_id',
             'application_secret' => 'application_secret',
             'is_error' => false,
-            'response_content' => '{"status":{"code":1000},"data" : {"accessToken": "accessToken"}}'
+            'response_content' => json_encode([
+                'status' => [
+                    'code' => 1000,
+                ],
+                'data' => [
+                    'accessToken' => 'accessToken'
+                ]
+            ]),
         ],
         'expected' => [
             'method' => 'POST',

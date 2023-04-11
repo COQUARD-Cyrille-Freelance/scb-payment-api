@@ -151,6 +151,7 @@ class API
         }
 
         $data = json_decode($response->getBody()->getContents());
+
         if (! $data || !property_exists($data, 'status') || !property_exists($data->status, 'code') || $data->status->code != '1000' || !property_exists($data, 'data')) {
             throw new SCBPaymentAPIException('SCB API Request failed');
         }
@@ -169,7 +170,7 @@ class API
     }
 
     /**
-     * Authenficate  to the API
+     * Authenticate  to the API
      *
      * @param string $appId ID from the application
      * @param string $appSecret Secret ID from the application
@@ -209,7 +210,7 @@ class API
         $this->failOnNotInitialize();
 
         $headers = [
-            'authorization' => ' Bearer ' . $this->token,
+            'authorization' => 'Bearer ' . $this->token,
             'resourceOwnerId' => $this->appId,
         ];
 
