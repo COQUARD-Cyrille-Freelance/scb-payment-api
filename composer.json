@@ -1,6 +1,6 @@
 {
     "name": "coquardcyr/scb-payment-api",
-    "description": "A php layer to use SCB payment API",
+    "description": "A php SDK to use SCB payment API",
     "type": "library",
     "license": "MIT",
     "authors": [

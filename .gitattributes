@@ -1,0 +1,9 @@
+// directories
+tests export-ignore
+
+// files
+.gitattributes export-ignore
+.gitignore export-ignore
+composer.lock export-ignore
+licence.txt export-ignore
+README.md export-ignore
