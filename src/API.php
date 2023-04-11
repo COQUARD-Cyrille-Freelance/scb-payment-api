@@ -31,35 +31,58 @@ use stdClass;
 class API
 {
     /**
-     * @var string base URL for all requests
+     * Base URL for all requests.
+     *
+     * @var string
      */
     protected $baseURL = '';
+
     /**
-     * @var string token for requests
+     * Token for requests.
+     *
+     * @var string
      */
     protected $token = '';
+
     /**
-     * @var string language in payload responses
+     * Language in payload responses.
+     *
+     * @var string
      */
     protected $language = '';
+
     /**
-     * @var string ID from the application
+     * ID from the application.
+     *
+     * @var string
      */
     protected $appId = '';
+
     /**
-     * @var string ID from the merchant
+     * ID from the merchant.
+     *
+     * @var string
      */
     protected $merchant = '';
+
     /**
-     * @var string ID from the terminal
+     * ID from the terminal.
+     *
+     * @var string
      */
     protected $terminal = '';
+
     /**
-     * @var string ID from the biller
+     * ID from the biller.
+     *
+     * @var string
      */
     protected $biller = '';
+
     /**
-     * @var string Reference prefix from the biller
+     * Reference prefix from the biller.
+     *
+     * @var string
      */
     protected $prefix = '';
 
@@ -71,26 +94,25 @@ class API
     protected $client;
 
     /**
+     * Request factory.
+     *
      * @var RequestFactoryInterface
      */
     protected $requestFactory;
 
     /**
+     * Stream factory.
+     *
      * @var StreamFactoryInterface
      */
     protected $streamFactory;
 
     /**
      * API constructor.
+     *
      * @param ClientInterface $client HTTP Client.
-     * @param string $appId ID from the application
-     * @param string $appSecret Secret ID from the application
-     * @param string $merchant ID from the merchant
-     * @param string $terminal ID from the terminal
-     * @param string $biller ID from the biller
-     * @param string $prefix Reference prefix from the biller
-     * @param bool $sandbox sandbox mode
-     * @param string $language language for the response payloads
+     * @param RequestFactoryInterface $requestFactory Request factory.
+     * @param StreamFactoryInterface $streamFactory Stream factory.
      */
     public function __construct(ClientInterface $client, RequestFactoryInterface $requestFactory, StreamFactoryInterface $streamFactory)
     {
@@ -114,6 +136,11 @@ class API
         $this->authenticate($this->appId, trim($configurations->getApplicationSecret()));
     }
 
+    /**
+     * Is initialized.
+     *
+     * @return bool
+     */
     public function is_initialized(): bool {
         return (bool) $this->token;
     }
@@ -293,6 +320,11 @@ class API
         return $data;
     }
 
+    /**
+     * Fail initialized.
+     *
+     * @return void
+     */
     protected function failOnNotInitialize() {
         if(! $this->token) {
             throw new SCBPaymentAPIException('Fail to get the transaction');
