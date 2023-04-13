@@ -12,7 +12,6 @@
     "require": {
         "php": ">=7.2",
         "ext-json": "*",
-        "ext-curl": "*",
         "ext-mbstring": "*",
         "psr/http-client": "^1.0",
         "psr/http-factory": "^1.0"
@@ -20,10 +19,7 @@
     "autoload": {
         "psr-4": {
             "CoquardCyrilleFreelance\\SCBPaymentAPI\\": "src/"
-        },
-        "classmap": [
-        ],
-        "exclude-from-classmap": []
+        }
     },
     "autoload-dev": {
         "psr-4": {
