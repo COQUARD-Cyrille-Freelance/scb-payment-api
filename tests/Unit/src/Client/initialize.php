@@ -60,11 +60,11 @@ class Test_Initialize extends TestCase
         $this->configurations->expects()->getApplicationSecret()->andReturn($config['application_secret']);
 
         foreach ($expected['headers'] as $header => $value) {
-            $this->request->expects()->withHeader($header, $value);
+            $this->request->expects()->withHeader($header, $value)->andReturnSelf();
         }
 
         $this->streamFactory->expects()->createStream($expected['body'])->andReturn($this->stream);
-        $this->request->expects()->withBody($this->stream);
+        $this->request->expects()->withBody($this->stream)->andReturnSelf();
 
         $this->configureResponseSuccess($config, $expected);
         $this->configureResponseFailure($config, $expected);

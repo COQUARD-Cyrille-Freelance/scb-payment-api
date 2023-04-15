@@ -76,11 +76,11 @@ class Test_CreateQRCode extends TestCase
         $this->requestFactory->expects()->createRequest($expected['method'], $expected['uri'])->andReturn($this->request);
 
         foreach ($expected['headers'] as $header => $value) {
-            $this->request->expects()->withHeader($header, $value);
+            $this->request->expects()->withHeader($header, $value)->andReturnSelf();
         }
 
         $this->streamFactory->expects()->createStream($expected['body'])->andReturn($this->stream);
-        $this->request->expects()->withBody($this->stream);
+        $this->request->expects()->withBody($this->stream)->andReturnSelf();
 
         $this->configureResponseSuccess($config, $expected);
         $this->configureResponseFailure($config, $expected);

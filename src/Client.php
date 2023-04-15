@@ -158,17 +158,17 @@ class Client
     {
         $request = $this->requestFactory->createRequest($method, $this->baseURL . $path);
 
-        $request->withHeader('accept-language', $this->language);
-        $request->withHeader('requestUId', $this->getNonce());
-        $request->withHeader('Content-Type', 'application/json');
+        $request = $request->withHeader('accept-language', $this->language);
+        $request = $request->withHeader('requestUId', $this->getNonce());
+        $request = $request->withHeader('Content-Type', 'application/json');
 
         foreach ($headers as $header => $value) {
-            $request->withHeader($header, $value);
+            $request = $request->withHeader($header, $value);
         }
 
         $body = json_encode($body);
 
-        $request->withBody($this->streamFactory->createStream($body));
+        $request = $request->withBody($this->streamFactory->createStream($body));
 
         try {
             $response = $this->client->sendRequest($request);
